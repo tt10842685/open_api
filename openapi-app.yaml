@@ -1,0 +1,1052 @@
+openapi: 3.0.1
+info:
+  title: 智慧养老系统 App端 API 文档
+  description: App端所有接口文档，包含老人管理、健康管理、服务申请等功能
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: "1.0"
+servers:
+- url: http://localhost:8081
+  description: Generated server url
+security:
+- Bearer Authentication: []
+tags:
+- name: App认证
+  description: App端用户登录、登出等相关接口
+- name: App-老人档案
+  description: App端老人档案管理相关接口
+paths:
+  /api/v1/app/elder/{id}:
+    get:
+      tags:
+      - App-老人档案
+      summary: 获取老人详情
+      operationId: getAppElderDetail
+      parameters:
+      - name: id
+        in: path
+        description: 老人ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseElderVO'
+    put:
+      tags:
+      - App-老人档案
+      summary: 更新老人档案
+      operationId: updateAppElder
+      parameters:
+      - name: id
+        in: path
+        description: 老人ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElderDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseElderVO'
+    delete:
+      tags:
+      - App-老人档案
+      summary: 删除老人档案
+      operationId: deleteAppElder
+      parameters:
+      - name: id
+        in: path
+        description: 老人ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+  /api/v1/app/elder/{id}/status:
+    put:
+      tags:
+      - App-老人档案
+      summary: 变更老人入住状态
+      operationId: updateAppElderStatus
+      parameters:
+      - name: id
+        in: path
+        description: 老人ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+  /api/v1/app/elder:
+    get:
+      tags:
+      - App-老人档案
+      summary: 分页查询老人列表
+      operationId: getAppElderList
+      parameters:
+      - name: name
+        in: query
+        description: 姓名（模糊查询）
+        required: false
+        schema:
+          type: string
+        example: 张三
+      - name: idCard
+        in: query
+        description: 身份证号（精确查询）
+        required: false
+        schema:
+          type: string
+        example: 110101199001011234
+      - name: phone
+        in: query
+        description: 联系电话（精确查询）
+        required: false
+        schema:
+          type: string
+        example: 13800138000
+      - name: startCheckInDate
+        in: query
+        description: 入住开始日期（格式：yyyy-MM-dd）
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-01-01
+      - name: endCheckInDate
+        in: query
+        description: 入住结束日期（格式：yyyy-MM-dd）
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-12-31
+      - name: careLevel
+        in: query
+        description: 护理等级（1:自理 2:半失能 3:全失能 4:特级护理）
+        required: false
+        schema:
+          type: integer
+          format: int32
+        example: 1
+      - name: status
+        in: query
+        description: 入住状态（0:未入住 1:在院 2:外出 3:住院 4:预定）
+        required: false
+        schema:
+          type: integer
+          format: int32
+        example: 1
+      - name: page
+        in: query
+        description: 页码
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        example: 1
+      - name: pageSize
+        in: query
+        description: 每页条数
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        example: 20
+      - name: sortField
+        in: query
+        description: 排序字段
+        required: false
+        schema:
+          type: string
+          default: createTime
+        example: createTime
+      - name: sortOrder
+        in: query
+        description: 排序方式（asc:升序 desc:降序）
+        required: false
+        schema:
+          type: string
+          default: desc
+        example: desc
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponsePageElderVO'
+    post:
+      tags:
+      - App-老人档案
+      summary: 创建老人档案
+      description: 创建老人档案，id字段不需要传，由系统自动生成
+      operationId: createAppElder
+      parameters:
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElderDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseElderVO'
+  /api/v1/app/auth/send-code:
+    post:
+      tags:
+      - App认证
+      summary: 发送登录验证码
+      description: 向指定手机号发送6位数字登录验证码，有效期5分钟
+      operationId: sendLoginCode
+      parameters:
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmsCodeRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseBoolean'
+  /api/v1/app/auth/logout:
+    post:
+      tags:
+      - App认证
+      summary: App用户登出
+      description: 清除当前用户的登录状态，使token失效
+      operationId: logout
+      parameters:
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+  /api/v1/app/auth/login:
+    post:
+      tags:
+      - App认证
+      summary: App用户登录
+      description: 支持手机号+验证码登录或手机号+密码登录
+      operationId: login
+      parameters:
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppLoginRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseAppLoginVO'
+  /api/v1/app/auth/current:
+    get:
+      tags:
+      - App认证
+      summary: 获取当前登录App用户信息
+      description: 获取当前登录用户的详细信息，需要携带有效token
+      operationId: getCurrentUser
+      parameters:
+      - name: testRole
+        in: query
+        description: 开发环境测试用户角色，不需要手动登录即可测试接口
+        required: false
+        schema:
+          type: string
+          default: SUPER_ADMIN
+          enum:
+          - SUPER_ADMIN
+          - BRAND_ADMIN
+          - DIRECTOR
+          - DOCTOR
+          - NURSE
+          - FAMILY
+        example: DOCTOR
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserVO'
+components:
+  schemas:
+    ElderDTO:
+      required:
+      - gender
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 主键 ID，创建时不需要传
+          format: int64
+          example: 1
+        name:
+          type: string
+          description: 姓名
+          example: 张三
+        gender:
+          type: integer
+          description: 性别：0-女 1-男
+          format: int32
+          example: 1
+          enum:
+          - 0
+          - 1
+        birthDate:
+          type: string
+          description: 出生日期
+          format: date
+          example: 1945-10-01
+        age:
+          type: integer
+          description: 年龄
+          format: int32
+          example: 78
+        idCard:
+          type: string
+          description: 身份证号
+          example: "110101194510011234"
+        phone:
+          type: string
+          description: 联系电话
+          example: "13800138000"
+        medicalCardNo:
+          type: string
+          description: 医保卡号
+          example: YBK123456789
+        address:
+          type: string
+          description: 户籍地址
+          example: 北京市海淀区XX街道XX小区
+        bedId:
+          type: integer
+          description: 床位 ID，入住时需要关联床位
+          format: int64
+          example: 10
+        institutionId:
+          type: integer
+          description: 所属养老院 ID
+          format: int64
+          example: 1
+        brandId:
+          type: integer
+          description: 所属品牌 ID
+          format: int64
+          example: 1
+        careLevel:
+          type: integer
+          description: 护理等级：1-自理 2-半失能 3-全失能 4-特级护理
+          format: int32
+          example: 2
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+        status:
+          type: integer
+          description: 入住状态：0-未入住 1-在院 2-外出 3-住院 4-预定，默认0
+          format: int32
+          example: 0
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        checkInDate:
+          type: string
+          description: 入住日期
+          format: date
+          example: 2024-01-01
+        emergencyContactName:
+          type: string
+          description: 紧急联系人姓名
+          example: 李四
+        emergencyContactPhone:
+          type: string
+          description: 紧急联系人电话
+          example: "13900139000"
+        emergencyContactRelation:
+          type: string
+          description: 紧急联系人关系
+          example: 儿子
+        remark:
+          type: string
+          description: 备注信息
+          example: 有高血压病史，需要定期测量血压
+      description: 老人档案信息
+    ApiResponseElderVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码，200表示成功，其他表示失败
+          format: int32
+          example: 200
+        message:
+          type: string
+          description: 响应消息
+          example: success
+        data:
+          $ref: '#/components/schemas/ElderVO'
+        requestId:
+          type: string
+          description: 请求唯一标识，用于问题排查
+          example: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+        timestamp:
+          type: integer
+          description: 响应时间戳
+          format: int64
+          example: 1704067200000
+      description: 统一API响应格式
+    ElderVO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 老人ID
+          format: int64
+          example: 1
+        name:
+          type: string
+          description: 姓名
+          example: 张三
+        gender:
+          type: integer
+          description: 性别：0-女 1-男
+          format: int32
+          example: 1
+          enum:
+          - 0
+          - 1
+        genderText:
+          type: string
+          description: 性别文本
+          example: 男
+        birthDate:
+          type: string
+          description: 出生日期
+          format: date
+          example: 1945-10-01
+        age:
+          type: integer
+          description: 年龄
+          format: int32
+          example: 78
+        idCard:
+          type: string
+          description: 身份证号
+          example: "110101194510011234"
+        phone:
+          type: string
+          description: 联系电话
+          example: "13800138000"
+        medicalCardNo:
+          type: string
+          description: 医保卡号
+          example: YBK123456789
+        address:
+          type: string
+          description: 户籍地址
+          example: 北京市海淀区XX街道XX小区
+        bedId:
+          type: integer
+          description: 床位 ID
+          format: int64
+          example: 10
+        bedNo:
+          type: string
+          description: 床位号
+          example: 302-1
+        institutionId:
+          type: integer
+          description: 所属养老院 ID
+          format: int64
+          example: 1
+        institutionName:
+          type: string
+          description: 养老院名称
+          example: 幸福养老院
+        floorId:
+          type: integer
+          description: 楼层 ID
+          format: int64
+          example: 3
+        floorName:
+          type: string
+          description: 楼层名称
+          example: 3楼
+        roomId:
+          type: integer
+          description: 房间 ID
+          format: int64
+          example: 302
+        roomNo:
+          type: string
+          description: 房间号
+          example: "302"
+        careLevel:
+          type: integer
+          description: 护理等级：1-自理 2-半失能 3-全失能 4-特级护理
+          format: int32
+          example: 2
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+        careLevelText:
+          type: string
+          description: 护理等级文本
+          example: 半失能
+        status:
+          type: integer
+          description: 入住状态：0-未入住 1-在院 2-外出 3-住院 4-预定
+          format: int32
+          example: 1
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        statusText:
+          type: string
+          description: 入住状态文本
+          example: 在院
+        checkInDate:
+          type: string
+          description: 入住日期
+          format: date
+          example: 2024-01-01
+        emergencyContactName:
+          type: string
+          description: 紧急联系人姓名
+          example: 李四
+        emergencyContactPhone:
+          type: string
+          description: 紧急联系人电话
+          example: "13900139000"
+        emergencyContactRelation:
+          type: string
+          description: 紧急联系人关系
+          example: 儿子
+        remark:
+          type: string
+          description: 备注信息
+          example: 有高血压病史，需要定期测量血压
+        createTime:
+          type: string
+          description: 创建时间
+          format: date-time
+        updateTime:
+          type: string
+          description: 更新时间
+          format: date-time
+      description: 老人信息响应对象
+    UpdateStatusRequest:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: integer
+          description: 入住状态（0:未入住 1:在院 2:外出 3:住院 4:预定）
+          format: int32
+          example: 1
+        remark:
+          type: string
+          description: 变更备注
+          example: 老人请假回家一周
+      description: 状态更新请求
+    ApiResponseVoid:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码，200表示成功，其他表示失败
+          format: int32
+          example: 200
+        message:
+          type: string
+          description: 响应消息
+          example: success
+        data:
+          type: object
+          description: 响应数据
+        requestId:
+          type: string
+          description: 请求唯一标识，用于问题排查
+          example: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+        timestamp:
+          type: integer
+          description: 响应时间戳
+          format: int64
+          example: 1704067200000
+      description: 统一API响应格式
+    SmsCodeRequest:
+      required:
+      - phone
+      type: object
+      properties:
+        phone:
+          pattern: "^1[3-9]\\d{9}$"
+          type: string
+          description: 手机号
+          example: "13800138000"
+      description: 短信验证码请求
+    ApiResponseBoolean:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码，200表示成功，其他表示失败
+          format: int32
+          example: 200
+        message:
+          type: string
+          description: 响应消息
+          example: success
+        data:
+          type: boolean
+          description: 响应数据
+        requestId:
+          type: string
+          description: 请求唯一标识，用于问题排查
+          example: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+        timestamp:
+          type: integer
+          description: 响应时间戳
+          format: int64
+          example: 1704067200000
+      description: 统一API响应格式
+    AppLoginRequest:
+      required:
+      - loginType
+      - phone
+      type: object
+      properties:
+        phone:
+          type: string
+          description: 手机号
+          example: "13800138000"
+        password:
+          type: string
+          description: 密码（密码登录时必填）
+          example: "123456"
+        code:
+          type: string
+          description: 验证码（验证码登录时必填）
+          example: "123456"
+        loginType:
+          type: string
+          description: 登录类型
+          example: sms
+          enum:
+          - password
+          - sms
+      description: 登录请求信息
+    ApiResponseAppLoginVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码，200表示成功，其他表示失败
+          format: int32
+          example: 200
+        message:
+          type: string
+          description: 响应消息
+          example: success
+        data:
+          $ref: '#/components/schemas/AppLoginVO'
+        requestId:
+          type: string
+          description: 请求唯一标识，用于问题排查
+          example: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+        timestamp:
+          type: integer
+          description: 响应时间戳
+          format: int64
+          example: 1704067200000
+      description: 统一API响应格式
+    AppLoginVO:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT访问令牌
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: '#/components/schemas/UserVO'
+        userType:
+          type: integer
+          description: 用户类型
+          format: int32
+          example: 3
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        boundElders:
+          type: array
+          description: 绑定的老人列表（家属用户返回）
+          items:
+            $ref: '#/components/schemas/ElderVO'
+        institutionId:
+          type: integer
+          description: 所属养老院ID（护工/医生用户返回）
+          format: int64
+          example: 1
+        institutionName:
+          type: string
+          description: 所属养老院名称（护工/医生用户返回）
+          example: 幸福养老院
+      description: App登录响应
+    UserVO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 用户ID
+          format: int64
+          example: 1
+        username:
+          type: string
+          description: 用户名
+          example: zhangsan
+        realName:
+          type: string
+          description: 真实姓名
+          example: 张三
+        roleName:
+          type: string
+          description: 角色名称
+          example: 医生
+        roleId:
+          type: integer
+          description: 角色ID
+          format: int64
+          example: 3
+        roleCode:
+          type: string
+          description: 角色编码
+          example: DOCTOR
+        institutionId:
+          type: integer
+          description: 所属养老院 ID
+          format: int64
+          example: 1
+        institutionName:
+          type: string
+          description: 养老院名称
+          example: 幸福养老院
+        avatar:
+          type: string
+          description: 头像URL
+          example: https://example.com/avatar/1.jpg
+        permissions:
+          type: array
+          description: 权限列表
+          example:
+          - elder:list
+          - elder:view
+          items:
+            type: string
+            description: 权限列表
+            example: "[\"elder:list\",\"elder:view\"]"
+      description: 用户信息响应对象
+    ApiResponsePageElderVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码，200表示成功，其他表示失败
+          format: int32
+          example: 200
+        message:
+          type: string
+          description: 响应消息
+          example: success
+        data:
+          $ref: '#/components/schemas/PageElderVO'
+        requestId:
+          type: string
+          description: 请求唯一标识，用于问题排查
+          example: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+        timestamp:
+          type: integer
+          description: 响应时间戳
+          format: int64
+          example: 1704067200000
+      description: 统一API响应格式
+    OrderItem:
+      type: object
+      properties:
+        column:
+          type: string
+        asc:
+          type: boolean
+    PageElderVO:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElderVO'
+        total:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        current:
+          type: integer
+          format: int64
+        orders:
+          type: array
+          writeOnly: true
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        optimizeCountSql:
+          $ref: '#/components/schemas/PageElderVO'
+        searchCount:
+          $ref: '#/components/schemas/PageElderVO'
+        optimizeJoinOfCountSql:
+          type: boolean
+          writeOnly: true
+        maxLimit:
+          type: integer
+          format: int64
+          writeOnly: true
+        countId:
+          type: string
+          writeOnly: true
+        pages:
+          type: integer
+          format: int64
+      description: 响应数据
+    ApiResponseUserVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 响应状态码，200表示成功，其他表示失败
+          format: int32
+          example: 200
+        message:
+          type: string
+          description: 响应消息
+          example: success
+        data:
+          $ref: '#/components/schemas/UserVO'
+        requestId:
+          type: string
+          description: 请求唯一标识，用于问题排查
+          example: a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6
+        timestamp:
+          type: integer
+          description: 响应时间戳
+          format: int64
+          example: 1704067200000
+      description: 统一API响应格式
+  securitySchemes:
+    Bearer Authentication:
+      type: http
+      description: JWT认证，格式：Bearer <token>
+      scheme: bearer
+      bearerFormat: JWT
